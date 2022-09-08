@@ -48,6 +48,8 @@ AGameCharacter::AGameCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	FollowCamera->SetupAttachment(CameraBoom, CameraBoom->SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+
+	AbilitySystemComp = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComp");
 }
 
 // Called when the game starts or when spawned
@@ -71,6 +73,45 @@ void AGameCharacter::PawnClientRestart()
 			// Add each mapping context, along with their priority values. Higher values outprioritize lower values.
 			Subsystem->AddMappingContext(BaseMappingContext, BaseMappingPriority);
 		}
+	}
+}
+
+void AGameCharacter::Input_Move(const FInputActionValue& InputActionValue)
+{
+	APawn* Pawn = this;
+	AController* CurrentController = Pawn ? Pawn->GetController() : nullptr;
+
+	if (CurrentController)
+	{
+		const FVector2D Value = InputActionValue.Get<FVector2D>();
+		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+
+		if (Value.X != 0.0f)
+		{
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
+			Pawn->AddMovementInput(MovementDirection, Value.X);
+		}
+
+		if (Value.Y != 0.0f)
+		{
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			Pawn->AddMovementInput(MovementDirection, Value.Y);
+		}
+	}
+}
+
+void AGameCharacter::Input_LookMouse(const FInputActionValue& InputActionValue)
+{
+	const FVector2D Values = InputActionValue.Get<FVector2D>();
+
+	if (Values.X != 0.0f)
+	{
+		this->AddControllerYawInput(Values.X);
+	}
+
+	if (Values.Y != 0.0f)
+	{
+		this->AddControllerPitchInput(Values.Y * -1.0f);
 	}
 }
 
@@ -99,40 +140,19 @@ void AGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
-void AGameCharacter::Input_Move(const FInputActionValue& InputActionValue)
+UAbilitySystemComponent* AGameCharacter::GetAbilitySystemComponent() const
 {
-	APawn* Pawn = this;
-	AController* CurrentController = Pawn ? Pawn->GetController() : nullptr;
-
-	if (CurrentController)
-	{
-		const FVector2D Value = InputActionValue.Get<FVector2D>();
-		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
-
-		if (Value.X != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
-			Pawn->AddMovementInput(MovementDirection, Value.X);
-		}
-
-		if (Value.Y != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-			Pawn->AddMovementInput(MovementDirection, Value.Y);
-		}
-	}
+	return AbilitySystemComp;
 }
-void AGameCharacter::Input_LookMouse(const FInputActionValue& InputActionValue)
+
+void AGameCharacter::AquireAbility(TSubclassOf<UGameplayAbility> InAbility)
 {
-	const FVector2D Values = InputActionValue.Get<FVector2D>();
-
-	if (Values.X != 0.0f)
+	if (AbilitySystemComp)
 	{
-		this->AddControllerYawInput(Values.X);
-	}
-
-	if (Values.Y != 0.0f)
-	{
-		this->AddControllerPitchInput(Values.Y * -1.0f);
+		if (HasAuthority() && InAbility)
+		{
+			AbilitySystemComp->GiveAbility(FGameplayAbilitySpec(InAbility, 1, 0));
+		}
+		AbilitySystemComp->InitAbilityActorInfo(this, this);
 	}
 }

@@ -14,7 +14,11 @@ public class AbilityTest : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "InputCore",
-                "GameplayTags" });
+                "GameplayAbilities",
+                "GameplayTags",
+                "GameplayTasks"
+            }
+        );
 
         PrivateDependencyModuleNames.AddRange(
             new string[] {
