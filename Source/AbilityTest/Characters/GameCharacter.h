@@ -12,6 +12,7 @@ class UInputMappingContext;
 struct FInputActionValue;
 class UAbilityInputConfig;
 struct FGameplayTag;
+class UBaseAttributeSet;
 
 UCLASS()
 class ABILITYTEST_API AGameCharacter : public ACharacter, public IAbilitySystemInterface
@@ -46,6 +47,9 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameCharacter")
 		UAbilitySystemComponent* AbilitySystemComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameCharacter")
+		UBaseAttributeSet* BaseAttributeSetComp;
 
 protected:
 	// Called when the game starts or when spawned

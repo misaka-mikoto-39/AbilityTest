@@ -1,0 +1,18 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "BaseAttributeSet.h"
+#include "GameplayEffectExtension.h"
+#include "GameplayEffect.h"
+
+UBaseAttributeSet::UBaseAttributeSet()
+	:Health(200.0f)
+{
+}
+
+void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<UProperty>(UBaseAttributeSet::StaticClass(), GET_MEMBER_NAME_CHECKED(UBaseAttributeSet, Health)))
+	{
+		UE_LOG(LogClass, Log, TEXT("Take damage, health = %f"), Health.GetCurrentValue());
+	}
+}

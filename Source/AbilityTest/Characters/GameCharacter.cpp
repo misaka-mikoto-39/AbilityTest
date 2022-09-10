@@ -14,6 +14,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilityTest/Input/AbilityInputConfig.h"
 #include "GameplayTagContainer.h"
+#include "BaseAttributeSet.h"
 
 // Sets default values
 AGameCharacter::AGameCharacter()
@@ -50,6 +51,7 @@ AGameCharacter::AGameCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, CameraBoom->SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 
 	AbilitySystemComp = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComp");
+	BaseAttributeSetComp = CreateDefaultSubobject<UBaseAttributeSet>("BaseAttributeSetComp");
 }
 
 // Called when the game starts or when spawned
