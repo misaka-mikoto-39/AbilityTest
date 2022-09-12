@@ -14,6 +14,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilityTest/Input/AbilityInputConfig.h"
 #include "GameplayTagContainer.h"
+#include "AIController.h"
+#include "BrainComponent.h"
 #include "BaseAttributeSet.h"
 
 // Sets default values
@@ -52,6 +54,7 @@ AGameCharacter::AGameCharacter()
 
 	AbilitySystemComp = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComp");
 	BaseAttributeSetComp = CreateDefaultSubobject<UBaseAttributeSet>("BaseAttributeSetComp");
+	TeamID = 255;
 }
 
 // Called when the game starts or when spawned
@@ -62,6 +65,7 @@ void AGameCharacter::BeginPlay()
 	{
 		BaseAttributeSetComp->OnHealthChange.AddDynamic(this, &AGameCharacter::OnHealthChange);
 	}
+	AutoTeamID();
 }
 
 void AGameCharacter::PawnClientRestart()
@@ -121,6 +125,14 @@ void AGameCharacter::Input_LookMouse(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AGameCharacter::AutoTeamID()
+{
+	if (GetController() && GetController()->IsPlayerController())
+	{
+		TeamID = 0;
+	}
+}
+
 // Called to bind functionality to input
 void AGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -168,7 +180,30 @@ void AGameCharacter::OnHealthChange(float Health, float MaxHealth)
 	if (Health <= 0.0f && !bIsDeath)
 	{
 		bIsDeath = true;
+		UE_LOG(LogClass, Log, TEXT("DEATH"));
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		if (PC)
+		{
+			PC->DisableInput(PC);
+			GetMovementComponent()->StopMovementImmediately();
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			DetachFromControllerPendingDestroy();
+			UE_LOG(LogClass, Log, TEXT("Player"));
+		}
+		else
+		{
+			AAIController* AIC = Cast<AAIController>(GetController());
+			if (AIC)
+			{
+				AIC->GetBrainComponent()->StopLogic("Dead");
+			}
+		}
 		BP_Die();
 	}
 	BP_OnHealthChange(Health, MaxHealth);
+}
+
+bool AGameCharacter::IsSameTeam(AGameCharacter* Other)
+{
+	return TeamID == Other->GetTeamID();
 }

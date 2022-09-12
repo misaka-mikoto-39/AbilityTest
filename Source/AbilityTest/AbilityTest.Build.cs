@@ -16,7 +16,8 @@ public class AbilityTest : ModuleRules
                 "InputCore",
                 "GameplayAbilities",
                 "GameplayTags",
-                "GameplayTasks"
+                "GameplayTasks",
+                "AIModule"
             }
         );
 
