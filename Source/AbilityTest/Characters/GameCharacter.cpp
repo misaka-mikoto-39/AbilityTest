@@ -58,6 +58,10 @@ AGameCharacter::AGameCharacter()
 void AGameCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	if (BaseAttributeSetComp)
+	{
+		BaseAttributeSetComp->OnHealthChange.AddDynamic(this, &AGameCharacter::OnHealthChange);
+	}
 }
 
 void AGameCharacter::PawnClientRestart()
@@ -157,4 +161,9 @@ void AGameCharacter::AquireAbility(TSubclassOf<UGameplayAbility> InAbility)
 		}
 		AbilitySystemComp->InitAbilityActorInfo(this, this);
 	}
+}
+
+void AGameCharacter::OnHealthChange(float Health, float MaxHealth)
+{
+	BP_OnHealthChange(Health, MaxHealth);
 }
