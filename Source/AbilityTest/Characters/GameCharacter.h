@@ -32,6 +32,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
+	bool bIsDeath = false;
+
 protected:
 	// INPUT ACTIONS CONFIG//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Controls|Input Mappings")
@@ -74,5 +76,7 @@ public:
 		void OnHealthChange(float Health, float MaxHealth);
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameCharacter", meta = (DisplayName = "OnHealthChanged"))
 		void BP_OnHealthChange(float Health, float MaxHealth);
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameCharacter", meta = (DisplayName = "OnDie"))
+		void BP_Die();
 
 };

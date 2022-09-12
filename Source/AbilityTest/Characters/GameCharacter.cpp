@@ -165,5 +165,10 @@ void AGameCharacter::AquireAbility(TSubclassOf<UGameplayAbility> InAbility)
 
 void AGameCharacter::OnHealthChange(float Health, float MaxHealth)
 {
+	if (Health <= 0.0f && !bIsDeath)
+	{
+		bIsDeath = true;
+		BP_Die();
+	}
 	BP_OnHealthChange(Health, MaxHealth);
 }
