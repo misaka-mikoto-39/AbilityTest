@@ -177,18 +177,14 @@ void AGameCharacter::AquireAbility(TSubclassOf<UGameplayAbility> InAbility)
 
 void AGameCharacter::OnHealthChange(float Health, float MaxHealth)
 {
+	BP_OnHealthChange(Health, MaxHealth);
 	if (Health <= 0.0f && !bIsDeath)
 	{
 		bIsDeath = true;
-		UE_LOG(LogClass, Log, TEXT("DEATH"));
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		if (PC)
 		{
 			PC->DisableInput(PC);
-			GetMovementComponent()->StopMovementImmediately();
-			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			DetachFromControllerPendingDestroy();
-			UE_LOG(LogClass, Log, TEXT("Player"));
 		}
 		else
 		{
@@ -198,9 +194,11 @@ void AGameCharacter::OnHealthChange(float Health, float MaxHealth)
 				AIC->GetBrainComponent()->StopLogic("Dead");
 			}
 		}
+		GetMovementComponent()->StopMovementImmediately();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		DetachFromControllerPendingDestroy();
 		BP_Die();
 	}
-	BP_OnHealthChange(Health, MaxHealth);
 }
 
 bool AGameCharacter::IsSameTeam(AGameCharacter* Other)
