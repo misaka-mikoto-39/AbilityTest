@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "AbilitySystemComponent.h"
 #include "GameCharacter.generated.h"
 
@@ -54,6 +55,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameCharacter")
 		UBaseAttributeSet* BaseAttributeSetComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameCharacter")
+		FGameplayTag FullHealthTag;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -82,10 +86,28 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameCharacter", meta = (DisplayName = "OnHealthChanged"))
 		void BP_OnHealthChange(float Health, float MaxHealth);
 
+	UFUNCTION()
+		void OnManaChange(float Mana, float MaxMana);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameCharacter", meta = (DisplayName = "OnManaChanged"))
+		void BP_OnManaChange(float Mana, float MaxMana);
+
+	UFUNCTION()
+		void OnStrengthChange(float Strength, float MaxStrength);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameCharacter", meta = (DisplayName = "OnStrengthChanged"))
+		void BP_OnStrengthChange(float Strength, float MaxStrength);
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameCharacter", meta = (DisplayName = "OnDie"))
 		void BP_Die();
 
 	UFUNCTION(BlueprintCallable, Category = "GameCharacter")
 		bool IsSameTeam(AGameCharacter* Other);
+
+	UFUNCTION(BlueprintCallable, Category = "GameCharacter")
+		void AddGameplayTag(FGameplayTag& Tag);
+
+	UFUNCTION(BlueprintCallable, Category = "GameCharacter")
+		void RemoveGameplayTag(FGameplayTag& Tag);
 
 };

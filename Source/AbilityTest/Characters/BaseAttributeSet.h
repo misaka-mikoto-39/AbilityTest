@@ -6,7 +6,7 @@
 #include "AttributeSet.h"
 #include "BaseAttributeSet.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangeDelegate, float, Health, float, MaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAttributeChangeDelegate, float, Health, float, MaxHealth);
 
 /**
  *
@@ -24,5 +24,19 @@ public:
 		FGameplayAttributeData Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseAttributeSet")
 		FGameplayAttributeData MaxHealth;
-	FOnHealthChangeDelegate OnHealthChange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseAttributeSet")
+		FGameplayAttributeData Mana;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseAttributeSet")
+		FGameplayAttributeData MaxMana;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseAttributeSet")
+		FGameplayAttributeData Strength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseAttributeSet")
+		FGameplayAttributeData MaxStrength;
+
+
+	FOnAttributeChangeDelegate OnHealthChange;
+	FOnAttributeChangeDelegate OnManaChange;
+	FOnAttributeChangeDelegate OnStrengthChange;
 };

@@ -64,8 +64,11 @@ void AGameCharacter::BeginPlay()
 	if (BaseAttributeSetComp)
 	{
 		BaseAttributeSetComp->OnHealthChange.AddDynamic(this, &AGameCharacter::OnHealthChange);
+		BaseAttributeSetComp->OnManaChange.AddDynamic(this, &AGameCharacter::OnManaChange);
+		BaseAttributeSetComp->OnStrengthChange.AddDynamic(this, &AGameCharacter::OnStrengthChange);
 	}
 	AutoTeamID();
+	AddGameplayTag(FullHealthTag);
 }
 
 void AGameCharacter::PawnClientRestart()
@@ -201,7 +204,28 @@ void AGameCharacter::OnHealthChange(float Health, float MaxHealth)
 	}
 }
 
+void AGameCharacter::OnManaChange(float Mana, float MaxMana)
+{
+	BP_OnManaChange(Mana, MaxMana);
+}
+
+void AGameCharacter::OnStrengthChange(float Strength, float MaxStrength)
+{
+	BP_OnStrengthChange(Strength, MaxStrength);
+}
+
 bool AGameCharacter::IsSameTeam(AGameCharacter* Other)
 {
 	return TeamID == Other->GetTeamID();
+}
+
+void AGameCharacter::AddGameplayTag(FGameplayTag& Tag)
+{
+	GetAbilitySystemComponent()->AddLooseGameplayTag(Tag);
+	GetAbilitySystemComponent()->SetTagMapCount(Tag, 1); // make it always to 1
+}
+
+void AGameCharacter::RemoveGameplayTag(FGameplayTag& Tag)
+{
+	GetAbilitySystemComponent()->RemoveLooseGameplayTag(Tag);
 }
