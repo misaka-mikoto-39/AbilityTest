@@ -14,6 +14,7 @@ struct FInputActionValue;
 class UAbilityInputConfig;
 struct FGameplayTag;
 class UBaseAttributeSet;
+class UGameplayAbilityBase;
 
 UCLASS()
 class ABILITYTEST_API AGameCharacter : public ACharacter, public IAbilitySystemInterface
@@ -68,6 +69,7 @@ protected:
 	void Input_LookMouse(const FInputActionValue& InputActionValue);
 
 	void AutoTeamID();
+	void AddAbilityToUI(TSubclassOf<UGameplayAbilityBase> InAbility);
 public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -79,7 +81,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameCharacter")
 		void AquireAbility(TSubclassOf<UGameplayAbility> InAbility);
-	
+
 	UFUNCTION()
 		void OnHealthChange(float Health, float MaxHealth);
 
@@ -109,5 +111,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameCharacter")
 		void RemoveGameplayTag(FGameplayTag& Tag);
-
 };

@@ -17,6 +17,8 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "BaseAttributeSet.h"
+#include "PlayerControllerBase.h"
+#include "Abilities/GameplayAbilityBase.h"
 
 // Sets default values
 AGameCharacter::AGameCharacter()
@@ -136,6 +138,20 @@ void AGameCharacter::AutoTeamID()
 	}
 }
 
+void AGameCharacter::AddAbilityToUI(TSubclassOf<UGameplayAbilityBase> InAbility)
+{
+	APlayerControllerBase* PC = GetController<APlayerControllerBase>();
+	if (PC)
+	{
+		UGameplayAbilityBase* AbilityInstance = InAbility.Get()->GetDefaultObject<UGameplayAbilityBase>();
+		if (AbilityInstance)
+		{
+			FGameplayAbilityInfo AbilityInfo = AbilityInstance->GetAbilityInfo();
+			PC->AddAbilityToUI(AbilityInfo);
+		}
+	}
+}
+
 // Called to bind functionality to input
 void AGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -175,6 +191,14 @@ void AGameCharacter::AquireAbility(TSubclassOf<UGameplayAbility> InAbility)
 			AbilitySystemComp->GiveAbility(FGameplayAbilitySpec(InAbility, 1, 0));
 		}
 		AbilitySystemComp->InitAbilityActorInfo(this, this);
+		if (InAbility->IsChildOf(UGameplayAbilityBase::StaticClass()))
+		{
+			TSubclassOf<UGameplayAbilityBase> AbilityBaseClass = InAbility;
+			if (AbilityBaseClass)
+			{
+				AddAbilityToUI(AbilityBaseClass);
+			}
+		}
 	}
 }
 
