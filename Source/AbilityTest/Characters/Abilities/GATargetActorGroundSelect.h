@@ -17,6 +17,10 @@ protected:
 	// ExposeOnSpawn allow change in spawn param
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ExposeOnSpawn=true))
 	float TraceRadius;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		UDecalComponent* Decal;
+
+	USceneComponent* RootComp;
 public:
 	AGATargetActorGroundSelect();
 	virtual void StartTargeting(UGameplayAbility* Ability) override;

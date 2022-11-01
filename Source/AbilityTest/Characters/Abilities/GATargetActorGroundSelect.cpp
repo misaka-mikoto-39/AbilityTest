@@ -2,18 +2,25 @@
 
 
 #include "GATargetActorGroundSelect.h"
+#include "Components/DecalComponent.h"
 #include "Abilities/GameplayAbility.h"
 
 AGATargetActorGroundSelect::AGATargetActorGroundSelect()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	RootComp = CreateDefaultSubobject<USceneComponent>("RootComp");
+	SetRootComponent(RootComp);
+	Decal->SetupAttachment(RootComponent);
+	TraceRadius = 200.0f;
+	Decal->DecalSize = FVector(TraceRadius);
 }
 
 void AGATargetActorGroundSelect::StartTargeting(UGameplayAbility* Ability)
 {
 	Super::StartTargeting(Ability);
 	MasterPC = Cast<APlayerController>(Ability->GetOwningActorFromActorInfo()->GetInstigatorController());
-
+	Decal->DecalSize = FVector(TraceRadius);
 }
 
 void AGATargetActorGroundSelect::ConfirmTargetingAndContinue()
@@ -43,20 +50,32 @@ void AGATargetActorGroundSelect::ConfirmTargetingAndContinue()
 			}
 		}
 	}
+
+	FGameplayAbilityTargetData_LocationInfo* CenterLocation = new FGameplayAbilityTargetData_LocationInfo();
+	if (Decal)
+	{
+		CenterLocation->TargetLocation.LiteralTransform = Decal->GetComponentTransform();
+		CenterLocation->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+	}
+
 	if (!OverlapActors.IsEmpty())
 	{
 		FGameplayAbilityTargetDataHandle TargetData = StartLocation.MakeTargetDataHandleFromActors(OverlapActors);
+		TargetData.Add(CenterLocation);
 		TargetDataReadyDelegate.Broadcast(TargetData);
 	}
 	else
 	{
-		TargetDataReadyDelegate.Broadcast(FGameplayAbilityTargetDataHandle());
+		TargetDataReadyDelegate.Broadcast(FGameplayAbilityTargetDataHandle(CenterLocation));
 	}
 }
 
 void AGATargetActorGroundSelect::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	FVector LookPoint;
+	GetPlayerLookingPoint(LookPoint);
+	Decal->SetWorldLocation(LookPoint);
 }
 
 bool AGATargetActorGroundSelect::GetPlayerLookingPoint(FVector& OutViewPoint)
