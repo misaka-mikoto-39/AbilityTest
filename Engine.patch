@@ -1,0 +1,33 @@
+ Engine/Source/Runtime/Core/Private/UObject/ObjectVersion.cpp | 2 +-
+ Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h    | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Engine/Source/Runtime/Core/Private/UObject/ObjectVersion.cpp b/Engine/Source/Runtime/Core/Private/UObject/ObjectVersion.cpp
+index 1576ab9eb7c9..94dbbbda16e3 100644
+--- a/Engine/Source/Runtime/Core/Private/UObject/ObjectVersion.cpp
++++ b/Engine/Source/Runtime/Core/Private/UObject/ObjectVersion.cpp
+@@ -17,7 +17,7 @@ const FPackageFileVersion GPackageFileUEVersion(VER_LATEST_ENGINE_UE4, EUnrealEn
+ const FPackageFileVersion GOldestLoadablePackageFileUEVersion = FPackageFileVersion::CreateUE4Version(VER_UE4_OLDEST_LOADABLE_PACKAGE);
+ 
+ const int32 GPackageFileUE4Version = VER_LATEST_ENGINE_UE4;
+-const int32 GPackageFileLicenseeUEVersion = VER_LATEST_ENGINE_LICENSEEUE4;
++const int32 GPackageFileLicenseeUEVersion = 1;
+ 
+ FPackageFileVersion FPackageFileVersion::CreateUE4Version(int32 Version)
+ {
+diff --git a/Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h b/Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h
+index 9436fedfd56f..3547338c840d 100644
+--- a/Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h
++++ b/Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h
+@@ -811,9 +811,9 @@ struct FPackageFileVersion
+ 	CORE_API static FPackageFileVersion FromCbObject(const FCbObject& Obj);
+ 
+ 	/* UE4 file version*/
+-	int32		FileVersionUE4 = 0;
++	int32		FileVersionUE4 = 1;
+ 	/* UE5 file version */
+-	int32		FileVersionUE5 = 0;
++	int32		FileVersionUE5 = 1;
+ };
+ 
+ #define VER_LATEST_ENGINE_UE4           PREPROCESSOR_ENUM_PROTECT(VER_UE4_AUTOMATIC_VERSION)
